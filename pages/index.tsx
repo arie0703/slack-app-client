@@ -2,10 +2,49 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
+import { useState } from "react";
+import axios from 'axios';
 
 const inter = Inter({ subsets: ['latin'] })
 
+type FormData = {
+  content: string
+  description: string
+}
+
 export default function Home() {
+
+  function sendToSlack() {
+    // TODO: 環境変数がstring | undefined型になるのをどうにかする
+    const webhookURL: string | undefined = process.env.NEXT_PUBLIC_SLACK_WORKFLOW_URL;
+    const dataString = JSON.stringify({ content: formData.content, description: formData.description });
+    return axios
+      .post(webhookURL || 'dummy', dataString)
+      .then((res) => {
+        console.log(res.status);
+        const response = {
+          httpStatus: 201,
+          message: 'success',
+          body: res.statusText,
+        };
+        return response;
+      })
+      .catch((err) => {
+        console.log(err.res.message);
+        throw new Error;
+      });
+  }
+
+  const [formData, setFormData] = useState<FormData>({
+    content: '',
+    description: ''
+  })
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
+  }
+
   return (
     <>
       <Head>
@@ -40,83 +79,48 @@ export default function Home() {
         </div>
 
         <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-          <div className={styles.thirteen}>
-            <Image
-              src="/thirteen.svg"
-              alt="13"
-              width={40}
-              height={31}
-              priority
-            />
+          <div className={styles.slack_message_box}>
+            <div className={styles.slack_message_image}>
+              <Image
+                src="/trophy.png"
+                alt="Trophy Image"
+                className={styles.slack_message_image_icon}
+                width={80}
+                height={80}
+                priority
+              />
+            </div>
+            <div className={styles.slack_message_content}>
+              <b>トロフィーを獲得しました</b>
+              <p>{formData.content}</p>
+              <div className={styles.slack_message_description}>
+                <p>{formData.description}</p>
+              </div>
+              
+            </div>
+            
           </div>
         </div>
+          <div className={styles.form_area}>
+            <form className={styles.form}>
+              <input
+                type="text"
+                name="content"
+                onChange={e => handleChange(e)}
+                value={formData.content}
+              />
 
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
+              <input
+                type="text"
+                name="description"
+                onChange={e => handleChange(e)}
+                value={formData.description}
+              />
+              {/* TODO: divではなくbuttonを使って実装したい（ページ更新が走らないようにする） */}
+              <div className={styles.button} onClick={sendToSlack}>SEND</div>
 
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
-        </div>
+            </form>
+          </div>
       </main>
     </>
   )

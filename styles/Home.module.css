@@ -151,6 +151,71 @@
   background-clip: content-box;
 }
 
+.button {
+  width: 100px;
+  padding: 5px 20px;
+  background-color: rgba(var(--callout-rgb), 1);
+  border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+  border-radius: 2px;
+}
+
+.button:hover {
+  background: rgba(60, 60, 60, 0.5);
+  cursor: pointer;
+  transition: 0.1s;
+}
+
+.form_area {
+  width: 50%;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(var(--callout-rgb), 1);
+  border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+}
+.form {
+  width: 30%;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.form input{
+  display: block;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.slack_message_box {
+  display: flex;
+  width: 500px;
+  padding: 15px;
+  border-radius: 15px;
+  background-color: rgba(var(--callout-rgb), 1);
+  border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+  z-index: 2;
+  font-family: var(--font-mono);
+}
+
+.slack_message_image {
+  height: 80px;
+  width: 80px;
+  background: #fff;
+}
+
+.slack_message_content {
+  margin-left: 10px;
+}
+
+.slack_message_description {
+  margin-top: 10px;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: rgba(30, 30, 30, 1);
+  border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+}
+
 /* Enable hover only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
   .card:hover {
